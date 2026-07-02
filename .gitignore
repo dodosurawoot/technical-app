@@ -1,0 +1,83 @@
+# Environment and local configuration
+.env
+.env.*
+!.env.example
+*.local
+*.local.*
+
+# Secrets, credentials, and certificates
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.cer
+*.csr
+*.jks
+*.keystore
+id_rsa
+id_ed25519
+*_rsa
+*_ed25519
+*.kdbx
+.npmrc
+.netrc
+
+# Local import data and user-provided files
+docs/import/*
+!docs/import/.gitkeep
+*.xls
+*.xlsx
+*.csv
+
+# Database files, dumps, and backups
+*.db
+*.sqlite
+*.sqlite3
+*.dump
+*.backup
+*.bak
+*.tmp
+*.old
+backups/
+backup/
+
+# Dependencies
+node_modules/
+vendor/
+
+# Frontend build output
+dist/
+build/
+.vite/
+coverage/
+
+# Go build and test output
+bin/
+*.test
+*.out
+*.coverprofile
+coverage.out
+
+# Logs and runtime files
+*.log
+logs/
+tmp/
+temp/
+.cache/
+.pid
+*.pid
+
+# Docker and local compose overrides
+docker-compose.override.yml
+compose.override.yml
+
+# Editor and OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.example.json
+*.swp
+*.swo

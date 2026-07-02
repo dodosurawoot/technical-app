@@ -1,0 +1,53 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: airclean
+      POSTGRES_USER: airclean
+      POSTGRES_PASSWORD: airclean
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airclean -d airclean"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      DATABASE_URL: postgres://airclean:airclean@postgres:5432/airclean?sslmode=disable
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+      BACKEND_URL: ${BACKEND_URL:-http://localhost:8080}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
+      AUTHENTIK_ISSUER_URL: ${AUTHENTIK_ISSUER_URL:-}
+      AUTHENTIK_CLIENT_ID: ${AUTHENTIK_CLIENT_ID:-}
+      AUTHENTIK_CLIENT_SECRET: ${AUTHENTIK_CLIENT_SECRET:-}
+      AUTHENTIK_REDIRECT_URL: ${AUTHENTIK_REDIRECT_URL:-http://localhost:5173/auth/callback}
+      DEV_AUTH: ${DEV_AUTH:-true}
+      AUTO_IMPORT_EXCEL: ${AUTO_IMPORT_EXCEL:-false}
+      IMPORT_EXCEL_PATH: ${IMPORT_EXCEL_PATH:-/app/import/ล้างแอร์.xlsx}
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./docs/import:/app/import:ro
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_BACKEND_URL: ${VITE_BACKEND_URL:-http://localhost:8080}
+        VITE_AUTHENTIK_ISSUER_URL: ${VITE_AUTHENTIK_ISSUER_URL:-}
+        VITE_AUTHENTIK_CLIENT_ID: ${VITE_AUTHENTIK_CLIENT_ID:-}
+        VITE_AUTHENTIK_REDIRECT_URL: ${VITE_AUTHENTIK_REDIRECT_URL:-http://localhost:5173/auth/callback}
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
